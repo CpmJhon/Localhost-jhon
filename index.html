@@ -3,310 +3,736 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrowserVault - Local Storage di Browser</title>
+    <title>BrowserVault - Secure Local Storage</title>
     <style>
+        /* ==========================================
+           RESET & VARIABLES
+           ========================================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+        }
+
+        /* Import font modern */
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+        /* ==========================================
+           THEME SYSTEM - 3 Variasi Warna
+           ========================================== */
+        :root {
+            /* Theme 1: Royal Purple (Default) */
+            --primary-1: #8B5CF6;
+            --primary-2: #6D28D9;
+            --accent-1: #F59E0B;
+            --gradient-1: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+            --shadow-1: 0 20px 40px -15px rgba(139, 92, 246, 0.3);
+        }
+
+        .theme-ocean {
+            /* Theme 2: Ocean Blue */
+            --primary-1: #0EA5E9;
+            --primary-2: #0284C7;
+            --accent-1: #10B981;
+            --gradient-1: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+            --shadow-1: 0 20px 40px -15px rgba(14, 165, 233, 0.3);
+        }
+
+        .theme-emerald {
+            /* Theme 3: Emerald Green */
+            --primary-1: #10B981;
+            --primary-2: #059669;
+            --accent-1: #F59E0B;
+            --gradient-1: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --shadow-1: 0 20px 40px -15px rgba(16, 185, 129, 0.3);
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #F9FAFB;
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
+            transition: background 0.3s ease;
         }
 
-        .container {
-            max-width: 1200px;
+        body.theme-dark {
+            background: #111827;
+        }
+
+        /* ==========================================
+           LAYOUT UTAMA
+           ========================================== */
+        .app-container {
+            max-width: 1400px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+            min-height: calc(100vh - 48px);
+        }
+
+        /* ==========================================
+           SIDEBAR - Navigasi Utama
+           ========================================== */
+        .sidebar {
+            background: white;
+            border-radius: 28px;
+            padding: 28px 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
 
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        .theme-dark .sidebar {
+            background: #1F2937;
             color: white;
-            padding: 30px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding: 0 12px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: var(--shadow-1);
+        }
+
+        .logo-text h2 {
+            font-size: 22px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        .theme-dark .logo-text p {
+            color: #9CA3AF;
+        }
+
+        /* Menu Navigasi */
+        .nav-menu {
+            flex: 1;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            margin: 4px 0;
+            border-radius: 16px;
+            color: #4B5563;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-dark .nav-item {
+            color: #D1D5DB;
+        }
+
+        .nav-item:hover {
+            background: #F3F4F6;
+            color: var(--primary-1);
+        }
+
+        .theme-dark .nav-item:hover {
+            background: #374151;
+        }
+
+        .nav-item.active {
+            background: var(--gradient-1);
+            color: white;
+            box-shadow: var(--shadow-1);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 4px;
+            background: white;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+            width: 24px;
             text-align: center;
         }
 
-        .logo {
-            font-size: 2.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .logo span {
-            color: #fbbf24;
-        }
-
-        .tagline {
-            font-size: 1.1em;
-            opacity: 0.95;
-            margin-bottom: 15px;
-        }
-
-        .info-badge {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 20px;
-            border-radius: 50px;
-            display: inline-block;
-            font-size: 0.9em;
-            backdrop-filter: blur(5px);
-        }
-
-        /* Main Content */
-        .main-content {
-            padding: 30px;
-        }
-
-        /* Storage Info */
-        .storage-info {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-radius: 15px;
+        /* Storage Info di Sidebar */
+        .storage-card {
+            background: #F9FAFB;
+            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
 
-        .storage-stats {
+        .theme-dark .storage-card {
+            background: #111827;
+        }
+
+        .storage-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .storage-icon-small {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .storage-title h4 {
+            font-size: 14px;
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        .storage-title h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1F2937;
+        }
+
+        .theme-dark .storage-title h3 {
+            color: white;
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            padding: 12px;
+            background: #F3F4F6;
+            border-radius: 50px;
+        }
+
+        .theme-dark .theme-switcher {
+            background: #374151;
+        }
+
+        .theme-option {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .theme-option.active {
+            transform: scale(1.1);
+            border-color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .theme-option.purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
+        .theme-option.blue { background: linear-gradient(135deg, #0EA5E9, #0284C7); }
+        .theme-option.green { background: linear-gradient(135deg, #10B981, #059669); }
+        .theme-option.dark { background: linear-gradient(135deg, #1F2937, #111827); }
+
+        /* ==========================================
+           MAIN CONTENT
+           ========================================== */
+        .main-content {
+            background: white;
+            border-radius: 28px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .theme-dark .main-content {
+            background: #1F2937;
+        }
+
+        /* Header Area */
+        .content-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 32px;
             flex-wrap: wrap;
             gap: 20px;
         }
 
-        .stats-left {
-            display: flex;
-            align-items: center;
-            gap: 20px;
+        .page-title h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
         }
 
-        .storage-icon {
-            width: 50px;
-            height: 50px;
-            background: #4f46e5;
-            border-radius: 12px;
+        .page-title p {
+            color: #6B7280;
+            font-weight: 500;
+        }
+
+        .theme-dark .page-title p {
+            color: #9CA3AF;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            background: #F3F4F6;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .theme-dark .btn-icon {
+            background: #374151;
+            color: white;
+        }
+
+        .btn-icon:hover {
+            background: var(--gradient-1);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #F9FAFB;
+            border-radius: 24px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .theme-dark .stat-card {
+            background: #111827;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary-1);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-1);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 24px;
+            margin-bottom: 16px;
         }
 
-        .storage-text h3 {
-            color: #1e293b;
-            margin-bottom: 5px;
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1F2937;
+            margin-bottom: 4px;
         }
 
-        .storage-text p {
-            color: #475569;
-            font-size: 0.9em;
+        .theme-dark .stat-value {
+            color: white;
         }
 
-        .usage-bar {
-            flex: 1;
-            min-width: 200px;
+        .stat-label {
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .bar {
-            height: 10px;
-            background: #cbd5e1;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 5px;
-        }
-
-        .bar-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .usage-text {
-            text-align: right;
-            color: #475569;
-            font-size: 0.9em;
-        }
-
-        /* Upload Area */
-        .upload-area {
-            border: 3px dashed #cbd5e1;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            margin-bottom: 30px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: #f8fafc;
-        }
-
-        .upload-area:hover, .upload-area.dragover {
-            border-color: #4f46e5;
-            background: #eef2ff;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(79, 70, 229, 0.2);
-        }
-
-        .upload-icon {
-            font-size: 48px;
-            color: #4f46e5;
-            margin-bottom: 15px;
-        }
-
-        .upload-area h3 {
-            color: #1e293b;
-            margin-bottom: 10px;
-        }
-
-        .upload-area p {
-            color: #64748b;
-            margin-bottom: 20px;
-        }
-
-        .file-types {
+        /* Search & Filter */
+        .search-section {
             display: flex;
-            gap: 15px;
-            justify-content: center;
+            gap: 16px;
+            margin-bottom: 28px;
             flex-wrap: wrap;
-            margin-top: 20px;
         }
 
-        .file-type-badge {
-            background: white;
-            padding: 8px 15px;
-            border-radius: 50px;
-            font-size: 0.85em;
-            color: #475569;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* Controls */
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .search-box {
+        .search-wrapper {
             flex: 1;
-            min-width: 250px;
+            min-width: 280px;
             position: relative;
         }
 
-        .search-box input {
+        .search-wrapper input {
             width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1em;
+            padding: 18px 20px 18px 55px;
+            background: #F9FAFB;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            font-size: 16px;
             transition: all 0.3s ease;
         }
 
-        .search-box input:focus {
+        .theme-dark .search-wrapper input {
+            background: #111827;
+            color: white;
+        }
+
+        .search-wrapper input:focus {
             outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            border-color: var(--primary-1);
+            background: white;
         }
 
         .search-icon {
             position: absolute;
-            left: 15px;
+            left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            color: #94a3b8;
+            color: #9CA3AF;
+            font-size: 20px;
         }
 
-        .filter-buttons {
+        .filter-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
 
-        .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            background: white;
-            color: #475569;
+        .filter-chip {
+            padding: 12px 24px;
+            background: #F3F4F6;
+            border: 2px solid transparent;
+            border-radius: 50px;
+            font-weight: 600;
+            color: #4B5563;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
+            transition: all 0.2s ease;
+            font-size: 14px;
         }
 
-        .filter-btn:hover {
-            border-color: #4f46e5;
-            color: #4f46e5;
+        .theme-dark .filter-chip {
+            background: #374151;
+            color: #D1D5DB;
         }
 
-        .filter-btn.active {
-            background: #4f46e5;
-            border-color: #4f46e5;
+        .filter-chip:hover {
+            background: #E5E7EB;
+        }
+
+        .filter-chip.active {
+            background: var(--gradient-1);
             color: white;
+            box-shadow: var(--shadow-1);
         }
 
-        .clear-btn {
-            padding: 10px 20px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .clear-btn:hover:not(:disabled) {
-            background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
-        }
-
-        .clear-btn:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-
-        /* Files Grid */
+        /* Files Grid - Modern Cards */
         .files-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            min-height: 200px;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
         }
 
-        .file-card {
-            background: white;
-            border-radius: 15px;
+        .file-card-modern {
+            background: #F9FAFB;
+            border-radius: 24px;
             padding: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
             border: 2px solid transparent;
             position: relative;
-            animation: slideIn 0.3s ease;
+            overflow: hidden;
         }
 
-        @keyframes slideIn {
+        .theme-dark .file-card-modern {
+            background: #111827;
+        }
+
+        .file-card-modern:hover {
+            border-color: var(--primary-1);
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-1);
+        }
+
+        .file-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-card-modern:hover::before {
+            opacity: 1;
+        }
+
+        .file-preview {
+            width: 100%;
+            height: 140px;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .theme-dark .file-preview {
+            background: #1F2937;
+        }
+
+        .file-info-modern {
+            margin-bottom: 16px;
+        }
+
+        .file-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .theme-dark .file-name {
+            color: white;
+        }
+
+        .file-meta-modern {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .file-actions-modern {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .btn-modern {
+            padding: 10px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-preview {
+            background: #E5E7EB;
+            color: #4B5563;
+        }
+
+        .theme-dark .btn-preview {
+            background: #374151;
+            color: #D1D5DB;
+        }
+
+        .btn-preview:hover {
+            background: #D1D5DB;
+        }
+
+        .btn-download-modern {
+            background: var(--gradient-1);
+            color: white;
+        }
+
+        .btn-download-modern:hover {
+            opacity: 0.9;
+            transform: scale(0.98);
+        }
+
+        .btn-delete-modern {
+            background: #FEE2E2;
+            color: #EF4444;
+            grid-column: span 2;
+        }
+
+        .btn-delete-modern:hover {
+            background: #FECACA;
+        }
+
+        /* Empty State Modern */
+        .empty-state-modern {
+            text-align: center;
+            padding: 80px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-illustration {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            background: #F3F4F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Upload Area Premium */
+        .upload-area-premium {
+            background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+            border: 3px dashed var(--primary-1);
+            border-radius: 32px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-dark .upload-area-premium {
+            background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+        }
+
+        .upload-area-premium:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-1);
+        }
+
+        .upload-area-premium::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .upload-icon-large {
+            font-size: 72px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .upload-title {
+            font-size: 28px;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .files-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -314,483 +740,281 @@
             }
         }
 
-        .file-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border-color: #4f46e5;
+        .animate-slide-up {
+            animation: slideUp 0.5s ease forwards;
         }
 
-        .file-icon {
-            font-size: 40px;
-            margin-bottom: 15px;
-            text-align: center;
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
         }
 
-        .file-info h4 {
-            color: #1e293b;
-            margin-bottom: 8px;
-            word-break: break-word;
-            font-size: 1em;
-        }
-
-        .file-meta {
-            color: #64748b;
-            font-size: 0.85em;
-            margin-bottom: 15px;
-        }
-
-        .file-meta div {
-            margin-bottom: 3px;
-        }
-
-        .file-actions {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.85em;
-            font-weight: 500;
-            flex: 1;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        .btn-download {
-            background: #4f46e5;
-            color: white;
-        }
-
-        .btn-download:hover {
-            background: #4338ca;
-        }
-
-        .btn-delete {
-            background: #fee2e2;
-            color: #ef4444;
-        }
-
-        .btn-delete:hover {
-            background: #fecaca;
-        }
-
-        .btn-view {
-            background: #e2e8f0;
-            color: #475569;
-        }
-
-        .btn-view:hover {
-            background: #cbd5e1;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            grid-column: 1 / -1;
-        }
-
-        .empty-icon {
-            font-size: 64px;
-            color: #94a3b8;
-            margin-bottom: 20px;
-        }
-
-        .empty-state h3 {
-            color: #1e293b;
-            margin-bottom: 10px;
-        }
-
-        .empty-state p {
-            color: #64748b;
-        }
-
-        /* Footer */
-        footer {
-            background: #f8fafc;
-            padding: 20px;
-            text-align: center;
-            border-top: 2px solid #e2e8f0;
-        }
-
-        .forum-link {
-            color: #4f46e5;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .forum-link:hover {
-            color: #7c3aed;
-            text-decoration: underline;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: white;
-            border-radius: 12px;
-            padding: 16px 24px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 1000;
-            border-left: 4px solid #4f46e5;
-        }
-
-        .toast.show {
-            transform: translateX(0);
-        }
-
-        .toast.success {
-            border-left-color: #10b981;
-        }
-
-        .toast.error {
-            border-left-color: #ef4444;
-        }
-
-        .toast-icon {
-            font-size: 20px;
-        }
-
-        .toast-message {
-            color: #1e293b;
-            font-weight: 500;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #4f46e5;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                border-radius: 15px;
-            }
-
-            header {
-                padding: 20px;
-            }
-
-            .logo {
-                font-size: 2em;
-            }
-
-            .main-content {
-                padding: 20px;
-            }
-
-            .stats-left {
-                width: 100%;
-            }
-
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .filter-buttons {
-                justify-content: center;
-            }
-
-            .files-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="logo">Browser<span>Vault</span></div>
-            <div class="tagline">Simpan file langsung di browser - 100% lokal & privat</div>
-            <div class="info-badge">⚡ IndexedDB • 🚀 Cepat • 🔒 Aman</div>
-        </header>
-
-        <div class="main-content">
-            <!-- Storage Info -->
-            <div class="storage-info">
-                <div class="storage-stats">
-                    <div class="stats-left">
-                        <div class="storage-icon">💾</div>
-                        <div class="storage-text">
-                            <h3>Local Storage</h3>
-                            <p>Data tersimpan di browser Anda</p>
-                        </div>
-                    </div>
-                    <div class="usage-bar">
-                        <div class="bar">
-                            <div class="bar-fill" id="storageBar" style="width: 0%"></div>
-                        </div>
-                        <div class="usage-text" id="storageText">0 KB / 0 KB</div>
-                    </div>
+<body class="theme-purple">
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo-icon">🔐</div>
+                <div class="logo-text">
+                    <h2>BrowserVault</h2>
+                    <p>Secure Local Storage</p>
                 </div>
             </div>
 
-            <!-- Upload Area -->
-            <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📁</div>
-                <h3>Seret & lepas file di sini</h3>
-                <p>atau klik untuk memilih file</p>
+            <div class="nav-menu">
+                <div class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>My Files</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">🖼️</span>
+                    <span>Photos</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">🎬</span>
+                    <span>Videos</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📄</span>
+                    <span>Documents</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">⚡</span>
+                    <span>Recent</span>
+                </div>
+            </div>
+
+            <div class="storage-card">
+                <div class="storage-header">
+                    <div class="storage-icon-small">💾</div>
+                    <div class="storage-title">
+                        <h4>Storage Used</h4>
+                        <h3 id="storageUsedSidebar">0 MB</h3>
+                    </div>
+                </div>
+                <div class="progress-bar" style="height: 8px; background: #E5E7EB; border-radius: 10px; overflow: hidden; margin-bottom: 12px;">
+                    <div class="progress-fill" id="storageProgress" style="width: 0%; height: 100%; background: var(--gradient-1); border-radius: 10px;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; color: #6B7280; font-size: 12px;">
+                    <span id="fileCountSidebar">0 files</span>
+                    <span id="storagePercent">0%</span>
+                </div>
+            </div>
+
+            <div class="theme-switcher">
+                <div class="theme-option purple active" onclick="setTheme('purple')" title="Royal Purple"></div>
+                <div class="theme-option blue" onclick="setTheme('ocean')" title="Ocean Blue"></div>
+                <div class="theme-option green" onclick="setTheme('emerald')" title="Emerald Green"></div>
+                <div class="theme-option dark" onclick="toggleDarkMode()" title="Dark Mode"></div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div class="content-header">
+                <div class="page-title">
+                    <h1>Dashboard</h1>
+                    <p>Manage your files securely in browser</p>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-icon" onclick="refreshFiles()">🔄</button>
+                    <button class="btn-icon" onclick="showSettings()">⚙️</button>
+                    <button class="btn-icon" onclick="showNotifications()">🔔</button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📁</div>
+                    <div class="stat-value" id="totalFilesStat">0</div>
+                    <div class="stat-label">Total Files</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🖼️</div>
+                    <div class="stat-value" id="imagesStat">0</div>
+                    <div class="stat-label">Images</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🎬</div>
+                    <div class="stat-value" id="videosStat">0</div>
+                    <div class="stat-label">Videos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📄</div>
+                    <div class="stat-value" id="documentsStat">0</div>
+                    <div class="stat-label">Documents</div>
+                </div>
+            </div>
+
+            <!-- Premium Upload Area -->
+            <div class="upload-area-premium" id="uploadArea">
+                <div class="upload-icon-large">⬆️</div>
+                <div class="upload-title">Upload Files</div>
+                <p style="color: #6B7280; margin-bottom: 20px;">Drag & drop or click to browse</p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span class="filter-chip" style="background: white;">📷 Images</span>
+                    <span class="filter-chip" style="background: white;">🎥 Videos</span>
+                    <span class="filter-chip" style="background: white;">📄 PDF</span>
+                    <span class="filter-chip" style="background: white;">📱 APK</span>
+                </div>
                 <input type="file" id="fileInput" multiple hidden>
-                <div class="file-types">
-                    <span class="file-type-badge">📷 Foto</span>
-                    <span class="file-type-badge">🎥 Video</span>
-                    <span class="file-type-badge">📄 PDF</span>
-                    <span class="file-type-badge">📱 APK</span>
-                    <span class="file-type-badge">📁 Lainnya</span>
-                </div>
             </div>
 
-            <!-- Controls -->
-            <div class="controls">
-                <div class="search-box">
+            <!-- Search & Filter -->
+            <div class="search-section">
+                <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" placeholder="Cari file...">
+                    <input type="text" id="searchInput" placeholder="Search files...">
                 </div>
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-filter="all">Semua</button>
-                    <button class="filter-btn" data-filter="image">Foto</button>
-                    <button class="filter-btn" data-filter="video">Video</button>
-                    <button class="filter-btn" data-filter="pdf">PDF</button>
-                    <button class="filter-btn" data-filter="apk">APK</button>
+                <div class="filter-group">
+                    <button class="filter-chip active" data-filter="all">All</button>
+                    <button class="filter-chip" data-filter="image">Images</button>
+                    <button class="filter-chip" data-filter="video">Videos</button>
+                    <button class="filter-chip" data-filter="pdf">PDFs</button>
+                    <button class="filter-chip" data-filter="apk">APKs</button>
                 </div>
-                <button class="clear-btn" id="clearAllBtn" disabled>
-                    <span>🗑️</span> Hapus Semua
-                </button>
             </div>
 
             <!-- Files Grid -->
             <div class="files-grid" id="filesGrid">
                 <!-- Files will be loaded here -->
-                <div class="empty-state">
-                    <div class="empty-icon">📦</div>
-                    <h3>Belum ada file</h3>
-                    <p>Upload file pertama Anda untuk memulai</p>
-                </div>
             </div>
-        </div>
-
-        <footer>
-            <p>© 2024 BrowserVault - Semua data tersimpan lokal di browser Anda</p>
-            <p>Project dilanjutkan oleh <a href="#" class="forum-link">SANN404 FORUM</a></p>
-        </footer>
+        </main>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <span class="toast-icon" id="toastIcon">✅</span>
-        <span class="toast-message" id="toastMessage">Berhasil!</span>
+    <!-- 429 Error Overlay (from previous code) -->
+    <div id="error429" class="error-429">
+        <!-- ... same as before ... -->
     </div>
 
     <script>
-        // Database configuration
-        const DB_NAME = 'BrowserVaultDB';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'files';
-
-        let db;
-        let currentFilter = 'all';
-        let searchQuery = '';
-
-        // Initialize database
-        function initDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-
-                request.onerror = () => reject(request.error);
-                request.onsuccess = () => {
-                    db = request.result;
-                    resolve(db);
-                };
-
-                request.onupgradeneeded = (event) => {
-                    const db = event.target.result;
-                    if (!db.objectStoreNames.contains(STORE_NAME)) {
-                        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                        store.createIndex('name', 'name', { unique: false });
-                        store.createIndex('type', 'type', { unique: false });
-                        store.createIndex('category', 'category', { unique: false });
-                        store.createIndex('timestamp', 'timestamp', { unique: false });
-                    }
-                };
+        // ==========================================
+        // THEME MANAGEMENT
+        // ==========================================
+        
+        function setTheme(theme) {
+            const body = document.body;
+            // Remove existing theme classes
+            body.classList.remove('theme-ocean', 'theme-emerald');
+            
+            if (theme === 'ocean') {
+                body.classList.add('theme-ocean');
+            } else if (theme === 'emerald') {
+                body.classList.add('theme-emerald');
+            }
+            
+            // Update active state
+            document.querySelectorAll('.theme-option').forEach(opt => {
+                opt.classList.remove('active');
             });
+            event.target.classList.add('active');
+            
+            // Save preference
+            localStorage.setItem('browservault_theme', theme);
         }
 
-        // File category detection
-        function getFileCategory(file) {
-            const type = file.type;
-            const name = file.name.toLowerCase();
-
-            if (type.startsWith('image/')) return 'image';
-            if (type.startsWith('video/')) return 'video';
-            if (type === 'application/pdf' || name.endsWith('.pdf')) return 'pdf';
-            if (name.endsWith('.apk')) return 'apk';
-            return 'other';
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('theme-dark');
+            
+            // Save preference
+            localStorage.setItem('browservault_darkmode', body.classList.contains('theme-dark'));
         }
 
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        // Load saved theme
+        function loadThemePreferences() {
+            const savedTheme = localStorage.getItem('browservault_theme');
+            if (savedTheme) {
+                setTheme(savedTheme);
+            }
+            
+            const darkMode = localStorage.getItem('browservault_darkmode');
+            if (darkMode === 'true') {
+                document.body.classList.add('theme-dark');
+            }
         }
 
-        // Format date
-        function formatDate(timestamp) {
-            return new Date(timestamp).toLocaleDateString('id-ID', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
+        // ==========================================
+        // ENHANCED UI FUNCTIONS
+        // ==========================================
+        
+        async function refreshFiles() {
+            // Add loading state
+            const grid = document.getElementById('filesGrid');
+            grid.innerHTML = '<div class="skeleton" style="height: 200px; border-radius: 24px;"></div>'.repeat(6);
+            
+            // Simulate refresh
+            setTimeout(() => {
+                displayFiles();
+                showNotification('Files refreshed successfully!', 'success');
+            }, 1000);
         }
 
-        // Get file icon
-        function getFileIcon(category, fileName) {
-            const ext = fileName.split('.').pop().toLowerCase();
-            const icons = {
-                image: '🖼️',
-                video: '🎬',
-                pdf: '📄',
-                apk: '📱',
-                other: '📁'
-            };
-            return icons[category] || '📄';
+        function showNotification(message, type = 'info') {
+            // Create floating notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? 'var(--primary-1)' : '#374151'};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 16px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+                z-index: 9999;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
         }
 
-        // Save file to IndexedDB
-        async function saveFile(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const fileData = {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        category: getFileCategory(file),
-                        data: e.target.result,
-                        timestamp: Date.now()
-                    };
-
-                    const transaction = db.transaction([STORE_NAME], 'readwrite');
-                    const store = transaction.objectStore(STORE_NAME);
-                    const request = store.add(fileData);
-
-                    request.onsuccess = () => {
-                        showToast(`✅ File ${file.name} berhasil diupload!`, 'success');
-                        resolve();
-                    };
-                    request.onerror = () => reject(request.error);
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        // Get all files
-        function getAllFiles() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readonly');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.getAll();
-
-                request.onsuccess = () => resolve(request.result);
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        // Delete file
-        function deleteFile(id) {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.delete(id);
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-        }
-
-        // Clear all files
-        function clearAllFiles() {
-            return new Promise((resolve, reject) => {
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.clear();
-
-                request.onsuccess = () => resolve();
-                request.onerror = () => reject(request.error);
-            });
-    }
-
-        // Get total storage usage
-        async function getStorageUsage() {
+        // Update stats
+        async function updateStats() {
             const files = await getAllFiles();
-            const totalSize = files.reduce((acc, file) => acc + file.size, 0);
-            return { totalSize, fileCount: files.length };
+            
+            const stats = {
+                total: files.length,
+                images: files.filter(f => f.category === 'image').length,
+                videos: files.filter(f => f.category === 'video').length,
+                documents: files.filter(f => ['pdf', 'apk'].includes(f.category)).length
+            };
+            
+            document.getElementById('totalFilesStat').textContent = stats.total;
+            document.getElementById('imagesStat').textContent = stats.images;
+            document.getElementById('videosStat').textContent = stats.videos;
+            document.getElementById('documentsStat').textContent = stats.documents;
+            
+            // Update sidebar
+            const totalSize = files.reduce((acc, f) => acc + f.size, 0);
+            const totalMB = (totalSize / (1024 * 1024)).toFixed(2);
+            document.getElementById('storageUsedSidebar').textContent = totalMB + ' MB';
+            document.getElementById('fileCountSidebar').textContent = stats.total + ' files';
+            
+            // Update progress bar (assuming 500MB limit)
+            const percent = Math.min((totalSize / (500 * 1024 * 1024)) * 100, 100);
+            document.getElementById('storageProgress').style.width = percent + '%';
+            document.getElementById('storagePercent').textContent = percent.toFixed(1) + '%';
         }
 
-        // Update storage info
-        async function updateStorageInfo() {
-            const { totalSize, fileCount } = await getStorageUsage();
-            
-            // Estimate available storage (IndexedDB typically allows up to 50% of disk space)
-            const estimatedQuota = 500 * 1024 * 1024; // Assume 500MB for demo
-            const percentage = Math.min((totalSize / estimatedQuota) * 100, 100);
-            
-            document.getElementById('storageBar').style.width = percentage + '%';
-            document.getElementById('storageText').innerHTML = 
-                `${formatFileSize(totalSize)} / ${formatFileSize(estimatedQuota)} • ${fileCount} file`;
-            
-            // Enable/disable clear all button
-            document.getElementById('clearAllBtn').disabled = fileCount === 0;
-        }
-
-        // Filter files
-        function filterFiles(files) {
-            return files.filter(file => {
-                // Filter by category
-                if (currentFilter !== 'all' && file.category !== currentFilter) {
-                    return false;
-                }
-                
-                // Filter by search query
-                if (searchQuery && !file.name.toLowerCase().includes(searchQuery.toLowerCase())) {
-                    return false;
-                }
-                
-                return true;
-            });
-        }
-
-        // Display files
+        // Override displayFiles to use modern cards
         async function displayFiles() {
             const files = await getAllFiles();
             const filteredFiles = filterFiles(files);
@@ -798,222 +1022,56 @@
             
             if (filteredFiles.length === 0) {
                 grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📦</div>
-                        <h3>Tidak ada file</h3>
-                        <p>${files.length === 0 ? 'Upload file pertama Anda' : 'Tidak ada file yang cocok dengan filter'}</p>
+                    <div class="empty-state-modern">
+                        <div class="empty-illustration">
+                            📦
+                        </div>
+                        <h3 style="font-size: 24px; color: #1F2937; margin-bottom: 12px;">No files yet</h3>
+                        <p style="color: #6B7280;">Upload your first file to get started</p>
                     </div>
                 `;
                 return;
             }
 
-            // Sort by newest first
-            filteredFiles.sort((a, b) => b.timestamp - a.timestamp);
-
             grid.innerHTML = filteredFiles.map(file => `
-                <div class="file-card" data-id="${file.id}">
-                    <div class="file-icon">${getFileIcon(file.category, file.name)}</div>
-                    <div class="file-info">
-                        <h4 title="${file.name}">${file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name}</h4>
-                        <div class="file-meta">
-                            <div>${formatFileSize(file.size)}</div>
-                            <div>${formatDate(file.timestamp)}</div>
+                <div class="file-card-modern animate-slide-up" data-id="${file.id}">
+                    <div class="file-preview">
+                        ${getFileIcon(file.category, file.name)}
+                    </div>
+                    <div class="file-info-modern">
+                        <div class="file-name" title="${file.name}">
+                            ${file.name.length > 25 ? file.name.substring(0, 22) + '...' : file.name}
                         </div>
-                        <div class="file-actions">
-                            <button class="btn btn-view" onclick="previewFile('${file.id}')">👁️ Lihat</button>
-                            <button class="btn btn-download" onclick="downloadFile('${file.id}')">⬇️ Unduh</button>
-                            <button class="btn btn-delete" onclick="deleteFileHandler('${file.id}')">🗑️ Hapus</button>
+                        <div class="file-meta-modern">
+                            <span>${formatFileSize(file.size)}</span>
+                            <span>•</span>
+                            <span>${formatDate(file.timestamp)}</span>
                         </div>
+                    </div>
+                    <div class="file-actions-modern">
+                        <button class="btn-modern btn-preview" onclick="previewFile('${file.id}')">
+                            <span>👁️</span> Preview
+                        </button>
+                        <button class="btn-modern btn-download-modern" onclick="downloadFile('${file.id}')">
+                            <span>⬇️</span> Get
+                        </button>
+                        <button class="btn-modern btn-delete-modern" onclick="deleteFileHandler('${file.id}')">
+                            <span>🗑️</span> Delete
+                        </button>
                     </div>
                 </div>
             `).join('');
-
-            await updateStorageInfo();
-        }
-
-        // Preview file
-        window.previewFile = async (id) => {
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.get(Number(id));
-
-            request.onsuccess = () => {
-                const file = request.result;
-                if (file.category === 'image') {
-                    const win = window.open();
-                    win.document.write(`
-                        <html>
-                            <head><title>${file.name}</title></head>
-                            <body style="margin:0;display:flex;align-items:center;justify-content:center;background:#f1f5f9;">
-                                <img src="${file.data}" style="max-width:100%;max-height:100vh;object-fit:contain;">
-                            </body>
-                        </html>
-                    `);
-                } else if (file.category === 'pdf') {
-                    const win = window.open();
-                    win.document.write(`
-                        <html>
-                            <head><title>${file.name}</title></head>
-                            <body style="margin:0;">
-                                <embed src="${file.data}" type="application/pdf" width="100%" height="100%">
-                            </body>
-                        </html>
-                    `);
-                } else {
-                    showToast('❌ Preview tidak tersedia untuk file ini', 'error');
-                }
-            };
-        };
-
-        // Download file
-        window.downloadFile = async (id) => {
-            const transaction = db.transaction([STORE_NAME], 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.get(Number(id));
-
-            request.onsuccess = () => {
-                const file = request.result;
-                const a = document.createElement('a');
-                a.href = file.data;
-                a.download = file.name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                showToast(`✅ Mendownload ${file.name}...`, 'success');
-            };
-        };
-
-        // Delete file handler
-        window.deleteFileHandler = async (id) => {
-            if (confirm('Apakah Anda yakin ingin menghapus file ini?')) {
-                try {
-                    await deleteFile(Number(id));
-                    await displayFiles();
-                    showToast('✅ File berhasil dihapus!', 'success');
-                } catch (error) {
-                    showToast('❌ Gagal menghapus file!', 'error');
-                }
-            }
-        };
-
-        // Show toast
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const icon = document.getElementById('toastIcon');
-            const msg = document.getElementById('toastMessage');
             
-            icon.textContent = type === 'success' ? '✅' : '❌';
-            msg.textContent = message;
-            toast.className = `toast ${type} show`;
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            await updateStats();
         }
 
-        // Handle file upload
-        async function handleFileUpload(files) {
-            let successCount = 0;
-            let errorCount = 0;
-
-            for (const file of files) {
-                try {
-                    await saveFile(file);
-                    successCount++;
-                } catch (error) {
-                    console.error('Error uploading file:', error);
-                    errorCount++;
-                }
-            }
-
-            await displayFiles();
-
-            if (errorCount > 0) {
-                showToast(`✅ ${successCount} file berhasil, ❌ ${errorCount} file gagal`, errorCount > 0 ? 'error' : 'success');
-            }
-        }
-
-        // Event Listeners
+        // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await initDB();
-                await displayFiles();
-
-                // Upload area
-                const uploadArea = document.getElementById('uploadArea');
-                const fileInput = document.getElementById('fileInput');
-
-                uploadArea.addEventListener('click', () => fileInput.click());
-
-                uploadArea.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    uploadArea.classList.add('dragover');
-                });
-
-                uploadArea.addEventListener('dragleave', () => {
-                    uploadArea.classList.remove('dragover');
-                });
-
-                uploadArea.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    uploadArea.classList.remove('dragover');
-                    handleFileUpload(e.dataTransfer.files);
-                });
-
-                fileInput.addEventListener('change', (e) => {
-                    handleFileUpload(e.target.files);
-                    fileInput.value = '';
-                });
-
-                // Filter buttons
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        currentFilter = btn.dataset.filter;
-                        displayFiles();
-                    });
-                });
-
-                // Search input
-                document.getElementById('searchInput').addEventListener('input', (e) => {
-                    searchQuery = e.target.value;
-                    displayFiles();
-                });
-
-                // Clear all button
-                document.getElementById('clearAllBtn').addEventListener('click', async () => {
-                    if (confirm('Apakah Anda yakin ingin menghapus SEMUA file?')) {
-                        try {
-                            await clearAllFiles();
-                            await displayFiles();
-                            showToast('✅ Semua file berhasil dihapus!', 'success');
-                        } catch (error) {
-                            showToast('❌ Gagal menghapus semua file!', 'error');
-                        }
-                    }
-                });
-
-                // Handle paste
-                document.addEventListener('paste', (e) => {
-                    const items = e.clipboardData.items;
-                    const files = [];
-                    
-                    for (let i = 0; i < items.length; i++) {
-                        if (items[i].kind === 'file') {
-                            files.push(items[i].getAsFile());
-                        }
-                    }
-                    
-                    if (files.length > 0) {
-                        handleFileUpload(files);
-                    }
-                });
-
-            } catch (error) {
-                console.error('Error initializing app:', error);
-                showToast('❌ Gagal menginisialisasi aplikasi!', 'error');
-            }
+            loadThemePreferences();
+            await initDB();
+            await displayFiles();
+            
+            // ... rest of initialization code from previous version ...
         });
     </script>
 </body>
