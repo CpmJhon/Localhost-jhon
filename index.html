@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserVault · Penyimpanan Lokal di Browser</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f0f5ff 0%, #e6eefa 100%);
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: #1e3c5c;
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 12px 20px -12px #1e3c5c;
+        }
+
+        .logo-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e293b, #1e4b6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 13px;
+            color: #5f6c84;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334e68;
+            font-weight: 500;
+            transition: 0.15s;
+        }
+
+        .nav-links a:hover {
+            color: #1e3c5c;
+        }
+
+        .btn-outline {
+            border: 1.5px solid #1e3c5c;
+            background: transparent;
+            padding: 10px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #1e3c5c;
+            cursor: pointer;
+            transition: 0.15s;
+            font-size: 15px;
+        }
+
+        .btn-outline:hover {
+            background: #1e3c5c;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            max-width: 1200px;
+            margin: 40px auto 60px;
+            padding: 0 30px;
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .hero-content {
+            flex: 1 1 450px;
+        }
+
+        .hero-badge {
+            background: rgba(30, 60, 92, 0.1);
+            color: #1e3c5c;
+            padding: 6px 18px;
+            border-radius: 40px;
+            display: inline-block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 25px;
+            border: 1px solid rgba(30, 60, 92, 0.2);
+        }
+
+        .hero-content h1 {
+            font-size: 58px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            background: linear-gradient(145deg, #132b40, #1e4b6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            font-size: 18px;
+            color: #405b77;
+            margin-bottom: 35px;
+            max-width: 550px;
+            line-height: 1.6;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .btn-primary {
+            background: #1e3c5c;
+            border: none;
+            padding: 16px 42px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 20px 30px -12px #1e3c5c;
+            transition: 0.2s;
+            border: 1px solid #2b5580;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-primary:hover {
+            background: #234e74;
+            transform: translateY(-3px);
+            box-shadow: 0 28px 36px -16px #1e3f60;
+        }
+
+        .btn-primary i {
+            font-size: 20px;
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 1px solid #cbd9ed;
+            padding: 16px 42px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 18px;
+            color: #1e3a5f;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 18px -10px #bacde0;
+        }
+
+        .btn-secondary:hover {
+            background: #f5faff;
+            border-color: #9ab3d3;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #1e3c5c;
+            box-shadow: 0 12px 22px -14px #193a57;
+        }
+
+        .stat-number {
+            font-weight: 800;
+            font-size: 22px;
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            color: #5f7592;
+            font-size: 14px;
+        }
+
+        .hero-image {
+            flex: 1 1 450px;
+            background: white;
+            border-radius: 48px;
+            padding: 30px 25px;
+            box-shadow: 0 40px 60px -30px #132c44;
+            border: 1px solid rgba(255,255,255,0.7);
+            backdrop-filter: blur(2px);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .preview-item {
+            background: #ecf2fc;
+            border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
+            color: #1e3a5f;
+            font-size: 30px;
+            border: 1px solid white;
+        }
+
+        .preview-item span {
+            display: block;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 500;
+            color: #476b92;
+        }
+
+        .preview-bar {
+            background: #e2ecfc;
+            border-radius: 30px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .preview-bar i {
+            font-size: 24px;
+            color: #1e3c5c;
+        }
+
+        .preview-bar .progress {
+            flex: 1;
+            height: 12px;
+            background: #c7daf5;
+            border-radius: 20px;
+        }
+
+        .preview-bar .progress-fill {
+            width: 65%;
+            height: 100%;
+            background: linear-gradient(90deg, #1e4f7a, #3f7cb0);
+            border-radius: 20px;
+        }
+
+        /* Fitur Section */
+        .features {
+            max-width: 1200px;
+            margin: 100px auto;
+            padding: 0 30px;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 40px;
+            font-weight: 700;
+            color: #132b40;
+            margin-bottom: 16px;
+        }
+
+        .section-title p {
+            color: #546e88;
+            font-size: 18px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 38px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 32px -18px #1c3853;
+            border: 1px solid #eaf0fa;
+            transition: 0.2s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: #b1cdf0;
+        }
+
+        .feature-icon {
+            background: #ecf2fc;
+            width: 70px;
+            height: 70px;
+            border-radius: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            color: #1e3c5c;
+            margin-bottom: 30px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .feature-card p {
+            color: #576f8b;
+            line-height: 1.6;
+        }
+
+        /* Cara Kerja */
+        .how-it-works {
+            background: white;
+            border-radius: 80px 80px 0 0;
+            padding: 80px 30px;
+            margin-top: 60px;
+        }
+
+        .steps {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+        }
+
+        .step {
+            flex: 1 1 200px;
+            text-align: center;
+        }
+
+        .step-number {
+            background: #1e3c5c;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0 auto 25px;
+            box-shadow: 0 14px 20px -10px #1e3c5c;
+        }
+
+        .step h4 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .step p {
+            color: #617fa0;
+        }
+
+        /* Footer */
+        .footer {
+            background: #132b40;
+            color: white;
+            padding: 50px 30px 30px;
+            border-radius: 50px 50px 0 0;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col a {
+            display: block;
+            color: #b3cef0;
+            text-decoration: none;
+            margin-bottom: 12px;
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 40px;
+            color: #8ba5c2;
+            font-size: 14px;
+        }
+
+        /* Toast */
+        .toast-demo {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1e3c5c;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 60px;
+            font-weight: 500;
+            box-shadow: 0 18px 28px -8px #0f2f4b;
+            opacity: 0;
+            transition: 0.3s;
+            z-index: 999;
+        }
+        .toast-demo.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="logo-text">
+                <h2>BrowserVault</h2>
+                <p>by JHON PRODUCTION</p>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Fitur</a>
+            <a href="#">Cara Kerja</a>
+            <a href="#">Kontak</a>
+            <button class="btn-outline" onclick="demoNavigation()"><i class="fas fa-rocket"></i> Coba Langsung</button>
+        </div>
+    </div>
+
+    <!-- Hero Section dengan Preview Aplikasi -->
+    <div class="hero">
+        <div class="hero-content">
+            <span class="hero-badge"><i class="fas fa-database"></i> 100% Local Storage</span>
+            <h1>Simpan File Apa Saja Langsung di Browser</h1>
+            <p>Foto, video, PDF, APK, dan file lainnya tersimpan aman di IndexedDB. Cepat, ringan, dan tanpa server. Privasi Anda terjaga.</p>
+            
+            <div class="hero-cta">
+                <button class="btn-primary" id="tryNowBtn"><i class="fas fa-cloud-upload-alt"></i> Coba Sekarang</button>
+                <button class="btn-secondary" onclick="scrollToFeatures()"><i class="fas fa-play-circle"></i> Lihat Demo</button>
+            </div>
+
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div>
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">File tersimpan</div>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon"><i class="fas fa-user-shield"></i></div>
+                    <div>
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Privasi lokal</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-image">
+            <!-- Preview mirip aplikasi vault -->
+            <div class="preview-grid">
+                <div class="preview-item"><i class="fas fa-image"></i><span>Foto</span></div>
+                <div class="preview-item"><i class="fas fa-video"></i><span>Video</span></div>
+                <div class="preview-item"><i class="fas fa-file-pdf"></i><span>PDF</span></div>
+                <div class="preview-item"><i class="fab fa-android"></i><span>APK</span></div>
+                <div class="preview-item"><i class="fas fa-file"></i><span>Lainnya</span></div>
+                <div class="preview-item"><i class="fas fa-music"></i><span>Musik</span></div>
+            </div>
+            <div class="preview-bar">
+                <i class="fas fa-database"></i>
+                <div class="progress"><div class="progress-fill"></div></div>
+                <span style="color:#1e3a5f; font-weight:500;">2.4 GB / 5 GB</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-top: 18px; color: #1e3a5f; font-size: 14px;">
+                <span><i class="fas fa-check-circle" style="color:#2a9d8f;"></i> 24 file</span>
+                <span><i class="fas fa-clock"></i> akses offline</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fitur Unggulan -->
+    <div class="features" id="features">
+        <div class="section-title">
+            <h2>Mengapa Memilih BrowserVault?</h2>
+            <p>Storage di browser yang cepat, aman, dan tanpa ribet</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-halved"></i></div>
+                <h3>100% Lokal</h3>
+                <p>Tidak ada upload ke server. Semua file tersimpan di IndexedDB browser Anda sendiri.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Sangat Cepat</h3>
+                <p>Akses file instan tanpa perlu koneksi internet. Cocok untuk penyimpanan sementara.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-file"></i></div>
+                <h3>Semua Format</h3>
+                <p>Foto, video, PDF, APK, dokumen — semua bisa disimpan dan dikelola.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cara Kerja -->
+    <div class="how-it-works">
+        <div class="section-title">
+            <h2>Cara Kerja BrowserVault</h2>
+            <p>Cukup 3 langkah mudah</p>
+        </div>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Upload File</h4>
+                <p>Pilih file dari perangkat Anda. Bisa multiple file sekaligus.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Simpan di IndexedDB</h4>
+                <p>File langsung tersimpan secara lokal di browser.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Kelola & Download</h4>
+                <p>Lihat, filter, cari, atau download kapan saja.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 60px;">
+            <button class="btn-primary" id="tryNowBtn2" style="padding: 16px 60px;"><i class="fas fa-arrow-right"></i> Coba Sekarang — Gratis</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <div>
+                <div class="footer-logo">
+                    <i class="fas fa-shield-alt" style="font-size: 32px;"></i>
+                    <span style="font-size: 24px; font-weight: 700;">BrowserVault</span>
+                </div>
+                <p style="margin-top: 20px; color: #b3cef0;">Penyimpanan lokal di browser<br>by JHON PRODUCTION</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4 style="margin-bottom: 20px;">Produk</h4>
+                    <a href="#">Fitur</a>
+                    <a href="#">Harga</a>
+                    <a href="#">FAQ</a>
+                </div>
+                <div class="footer-col">
+                    <h4 style="margin-bottom: 20px;">Perusahaan</h4>
+                    <a href="#">Tentang</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Kontak</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 BrowserVault · Semua data tersimpan lokal di browser Anda
+        </div>
+    </div>
+
+    <!-- Toast untuk notifikasi navigasi -->
+    <div id="demoToast" class="toast-demo">
+        <i class="fas fa-spinner fa-pulse"></i> Mengarahkan ke aplikasi...
+    </div>
+
+    <script>
+        // Fungsi navigasi yang mensimulasikan pindah ke halaman aplikasi (vault)
+        function navigateToVault() {
+            const toast = document.getElementById('demoToast');
+            toast.innerHTML = '<i class="fas fa-arrow-right"></i> Mengarahkan ke /app ...';
+            toast.classList.add('show');
+            
+            // Simulasi redirect (di sini kita akan membuka halaman baru dengan konten aplikasi vault)
+            // Untuk demo, kita buka di tab baru dengan URL base yang sama + #app (agar bisa ditangkap)
+            // TAPI karena ini environment kode statis, kita akan buka di _blank dengan konten yang sama.
+            // Idealnya di sini redirect ke halaman yang memuat konten aplikasi penuh.
+            
+            // Buat halaman baru dengan konten aplikasi vault (dari code sebelumnya)
+            setTimeout(() => {
+                // Buka tab baru dan tulis konten aplikasi vault
+                const vaultWindow = window.open('', '_blank');
+                if (vaultWindow) {
+                    vaultWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head><title>BrowserVault · App</title>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+                        <style>
+                            * { margin:0; padding:0; box-sizing:border-box; font-family:'Inter',sans-serif; }
+                            body { background:#f4f6fb; padding:24px; }
+                            .app-wrapper { max-width:1300px; margin:0 auto; }
+                            .top-brand { display:flex; justify-content:space-between; margin-bottom:28px; }
+                            .logo-area { display:flex; gap:12px; }
+                            .vault-icon { background:#1e3c5c; color:white; width:48px; height:48px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:26px; }
+                            .title h1 { font-size:28px; background:linear-gradient(145deg,#1e293b,#1e4b6a); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+                            .storage-chip { background:white; padding:8px 20px; border-radius:40px; display:flex; gap:10px; border:1px solid #e7edf4; }
+                            .stats-grid { display:flex; gap:18px; margin-bottom:32px; flex-wrap:wrap; }
+                            .stat-card { background:white; border-radius:28px; padding:20px 28px; flex:1; display:flex; gap:16px; }
+                            .action-bar { display:flex; justify-content:space-between; margin-bottom:30px; flex-wrap:wrap; }
+                            .btn-primary { background:#1e3c5c; color:white; border:none; padding:12px 26px; border-radius:40px; cursor:pointer; }
+                            .filter-tabs { display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap; }
+                            .tab { background:white; padding:8px 22px; border-radius:40px; border:1px solid #d9e2ef; cursor:pointer; }
+                            .tab.active { background:#1e3c5c; color:white; }
+                            .file-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; }
+                            .file-card { background:white; border-radius:28px; padding:22px; }
+                            .footer-note { margin-top:30px; text-align:center; color:#798aa8; }
+                            .empty-state { grid-column:1/-1; background:white; border-radius:60px; padding:70px; text-align:center; border:2px dashed #ccdff5; }
+                        </style>
+                        </head>
+                        <body>
+                        <div class="app-wrapper">
+                            <div class="top-brand">
+                                <div class="logo-area">
+                                    <div class="vault-icon"><i class="fas fa-shield-alt"></i></div>
+                                    <div class="title"><h1>BrowserVault</h1><p><i class="fas fa-database"></i> IndexedDB local storage · JHON PRODUCTION</p></div>
+                                </div>
+                                <div class="storage-chip"><i class="fas fa-microchip"></i> <span>0 items</span> · <span>0 KB</span></div>
+                            </div>
+                            <div class="stats-grid">
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-alt"></i></div><div><h3>0</h3><p>total files</p></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-images"></i></div><div><h3>0</h3><p>images</p></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-video"></i></div><div><h3>0</h3><p>videos</p></div></div>
+                                <div class="stat-card"><div class="stat-icon"><i class="fas fa-file-pdf"></i></div><div><h3>0</h3><p>PDFs</p></div></div>
+                            </div>
+                            <div class="action-bar">
+                                <div><button class="btn-primary" id="uploadBtn"><i class="fas fa-cloud-upload-alt"></i> Upload file</button></div>
+                                <div class="search-box"></div>
+                            </div>
+                            <div class="filter-tabs">
+                                <div class="tab active">Semua</div><div class="tab">Foto</div><div class="tab">Video</div><div class="tab">PDF</div><div class="tab">APK</div><div class="tab">Lainnya</div>
+                            </div>
+                            <div class="file-grid">
+                                <div class="empty-state"><i class="fas fa-box-open"></i><h3>Belum ada file</h3><p>Upload foto, video, pdf, apk atau file lain — semua lokal di browser.</p></div>
+                            </div>
+                            <div class="footer-note"><span><i class="fas fa-database"></i> <strong>IndexedDB</strong> — 100% lokal</span></div>
+                        </div>
+                        <script>
+                            document.getElementById('uploadBtn')?.addEventListener('click', () => {
+                                alert('Fitur upload siap digunakan! Silakan pilih file.');
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.multiple = true;
+                                input.click();
+                            });
+                        <\/script>
+                        </body>
+                        </html>
+                    `);
+                    vaultWindow.document.close();
+                    toast.classList.remove('show');
+                } else {
+                    alert('Izinkan popup untuk membuka aplikasi BrowserVault');
+                    toast.classList.remove('show');
+                }
+            }, 800);
+        }
+
+        // Handle tombol Coba Sekarang
+        document.getElementById('tryNowBtn').addEventListener('click', navigateToVault);
+        document.getElementById('tryNowBtn2').addEventListener('click', navigateToVault);
+
+        // Fungsi global untuk demo navigation dari navbar
+        window.demoNavigation = navigateToVault;
+
+        // Scroll ke fitur
+        window.scrollToFeatures = function() {
+            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+        };
+
+        // Simulasi route /index.html dan /index.html/app
+        // Jika URL mengandung '/app' maka langsung redirect ke vault
+        (function checkRoute() {
+            const path = window.location.pathname + window.location.hash;
+            if (path.includes('/app') || path.includes('#app')) {
+                // Redirect ke vault
+                navigateToVault();
+            }
+        })();
+    </script>
+</body>
+</html>
