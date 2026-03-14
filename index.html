@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrowserVault · Home</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background: #f4f6fb;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(12px);
+            padding: 16px 32px;
+            border-bottom: 1px solid rgba(30, 60, 92, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: #1e3c5c;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 10px 18px -8px rgba(20, 50, 80, 0.3);
+        }
+
+        .logo-text h2 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(145deg, #1e293b, #1e4b6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #2d4a70;
+            font-weight: 600;
+            font-size: 16px;
+            transition: 0.1s;
+        }
+
+        .nav-links a:hover {
+            color: #0b233a;
+        }
+
+        .btn-outline {
+            border: 2px solid #1e3c5c;
+            background: transparent;
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-weight: 700;
+            color: #1e3c5c;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+
+        .btn-outline:hover {
+            background: #1e3c5c;
+            color: white;
+        }
+
+        /* Hero Section */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 0 32px;
+            gap: 40px;
+            flex: 1;
+        }
+
+        .hero-content {
+            flex: 1.2;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #1e3c5c, #2f5885);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .hero-content .subhead {
+            font-size: 1.3rem;
+            color: #416a96;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .hero-content .description {
+            font-size: 1.1rem;
+            color: #4b6589;
+            max-width: 550px;
+            margin-bottom: 36px;
+            line-height: 1.6;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 36px;
+        }
+
+        .feature-badge {
+            background: white;
+            padding: 8px 22px;
+            border-radius: 40px;
+            box-shadow: 0 6px 14px rgba(0,20,40,0.05);
+            font-weight: 600;
+            color: #1e3c5c;
+            border: 1px solid #caddf0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-badge i {
+            color: #2b6c9e;
+        }
+
+        .cta-button {
+            background: #1e3c5c;
+            border: none;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 18px 50px;
+            border-radius: 60px;
+            cursor: pointer;
+            box-shadow: 0 20px 30px -10px #1e3c5c;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid #31699e;
+            margin-bottom: 40px;
+        }
+
+        .cta-button:hover {
+            background: #234e74;
+            transform: scale(1.03);
+            box-shadow: 0 26px 35px -12px #1a3f60;
+        }
+
+        .hero-image {
+            flex: 0.9;
+            background: white;
+            border-radius: 60px;
+            padding: 30px 20px;
+            box-shadow: 0 40px 60px -25px #1e3c5c60;
+            border: 1px solid white;
+            text-align: center;
+        }
+
+        .grid-preview {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 15px;
+        }
+        .preview-card {
+            background: #ecf2fc;
+            border-radius: 24px;
+            padding: 18px 8px;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.8);
+        }
+        .preview-card .bar {
+            height: 12px;
+            background: #b6d0ea;
+            border-radius: 20px;
+            margin: 8px 0;
+        }
+        .preview-card .icon {
+            color: #1e3c5c;
+            font-size: 24px;
+        }
+
+        .stats-mini {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 24px;
+            color: #284f7a;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .footer-home {
+            text-align: center;
+            padding: 32px;
+            color: #7089a8;
+            border-top: 1px solid #d8e4f2;
+            margin-top: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+            .hero-content h1 {
+                font-size: 2.8rem;
+            }
+            .description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .badge-container {
+                justify-content: center;
+            }
+            .cta-button {
+                padding: 16px 40px;
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .navbar {
+                padding: 16px;
+            }
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .nav-links {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="logo-text"><h2>BrowserVault</h2></div>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="app.html" id="vaultLink">Vault</a>
+            <a href="#">Docs</a>
+            <button class="btn-outline" id="repoBtn"><i class="fab fa-github"></i> JHON PRODUCTION</button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <main class="hero">
+        <div class="hero-content">
+            <h1>Local storage di browser,<br>100% privasi.</h1>
+            <div class="subhead"><i class="fas fa-cloud-upload-alt" style="margin-right: 10px;"></i> BrowserVault — IndexedDB super sederhana</div>
+            <p class="description">
+                Simpan foto, video, PDF, APK, atau file apapun langsung di browser. 
+                Tidak ada upload ke server, semua tetap di perangkat kamu. 
+                Cocok untuk temporary storage yang cepat & ringan.
+            </p>
+            
+            <div class="badge-container">
+                <span class="feature-badge"><i class="fas fa-bolt"></i> Cepat</span>
+                <span class="feature-badge"><i class="fas fa-lock"></i> 100% lokal</span>
+                <span class="feature-badge"><i class="fas fa-image"></i> Foto/Video</span>
+                <span class="feature-badge"><i class="fas fa-file-pdf"></i> PDF/APK</span>
+            </div>
+
+            <!-- TOMBOL COBA SEKARANG mengarah ke app.html -->
+            <a href="app.html">
+                <button class="cta-button" id="cobaSekarangBtn">
+                    <i class="fas fa-rocket"></i> Coba sekarang
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </a>
+
+            <div style="display: flex; gap: 24px; color: #3d618a; font-weight: 500;">
+                <span><i class="fas fa-check-circle" style="color: #1f9c6b;"></i> 100% gratis</span>
+                <span><i class="fas fa-database"></i> indexedDB</span>
+            </div>
+        </div>
+
+        <!-- Hero right: preview -->
+        <div class="hero-image">
+            <div style="background: #dae9ff; border-radius: 40px; padding: 10px;">
+                <div style="background: white; border-radius: 32px; padding: 15px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <span style="background: #1e3c5c; color: white; padding: 6px 16px; border-radius: 30px;">📦 Vault</span>
+                        <span><i class="fas fa-microchip" style="color:#345f8c;"></i> 12 items</span>
+                    </div>
+                    <div class="grid-preview">
+                        <div class="preview-card"><i class="fas fa-image icon"></i><div class="bar" style="width:70%"></div></div>
+                        <div class="preview-card"><i class="fas fa-file-pdf icon"></i><div class="bar" style="width:50%"></div></div>
+                        <div class="preview-card"><i class="fas fa-film icon"></i><div class="bar" style="width:80%"></div></div>
+                        <div class="preview-card"><i class="fab fa-android icon"></i><div class="bar" style="width:40%"></div></div>
+                    </div>
+                    <div class="stats-mini">
+                        <span><i class="fas fa-cloud-upload-alt"></i> Upload</span>
+                        <span><i class="fas fa-search"></i> Cari</span>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-weight: 500;"><i class="fas fa-arrow-up"></i> tampilan vault sebenarnya</p>
+        </div>
+    </main>
+
+    <footer class="footer-home">
+        <p><strong>BrowserVault</strong> · JHON PRODUCTION · dilanjutkan dari arsip · <i class="fas fa-rotate-right"></i> 2025</p>
+        <p style="margin-top: 12px; font-size: 14px;">📁 Semua file disimpan di IndexedDB — tidak ada server</p>
+    </footer>
+
+    <script>
+        // Navigasi manual jika tombol diklik (untuk memastikan)
+        document.getElementById('cobaSekarangBtn').addEventListener('click', function(e) {
+            window.location.href = 'app.html';
+        });
+
+        document.getElementById('vaultLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'app.html';
+        });
+
+        document.getElementById('repoBtn').addEventListener('click', function() {
+            window.open('https://github.com', '_blank');
+        });
+    </script>
+</body>
+</html>
