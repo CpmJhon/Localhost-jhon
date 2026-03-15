@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrowserVault · Vault (with Preview)</title>
+    <title>BrowserVault · Vault (with Preview & Gate)</title>
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Semua CSS sebelumnya tetap sama, tambahkan style untuk preview di bawah */
         * {
             margin: 0;
             padding: 0;
@@ -18,14 +17,171 @@
         body {
             background: #f4f6fb;
             color: #1e293b;
-            padding: 24px 20px;
+            padding: 0;
             min-height: 100vh;
         }
 
-        .app-wrapper {
-            max-width: 1300px;
-            margin: 0 auto;
+        /* GATE / VERIFIKASI PAGE */
+        .gate-page {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #0b1a2c, #152a40);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .gate-page.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .form-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 40px 32px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(255, 255, 255, 0.1);
+            text-align: center;
+            animation: slideUp 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .brand-section {
+            margin-bottom: 28px;
+        }
+
+        .logo-circle {
+            background: linear-gradient(145deg, #1e3c5c, #2b5580);
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+            box-shadow: 0 15px 25px -8px #0f2f4b;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .brand-section h2 {
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(145deg, #1e293b, #1e4b6a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .gate-text {
+            color: #475569;
+            margin-bottom: 28px;
+            font-size: 15px;
+            line-height: 1.5;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 60px;
+            border: 1px solid #dae3ef;
+        }
+
+        .btn-gate {
+            background: linear-gradient(145deg, #ecf2fc, #e0eaf9);
+            border: 1px solid #cddef5;
+            padding: 16px 24px;
+            border-radius: 60px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #1e3c5c;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 14px;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-gate:hover {
+            background: linear-gradient(145deg, #d3e2f7, #c5d8f2);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(30, 60, 92, 0.3);
+            border-color: #9bb9e0;
+        }
+
+        .btn-gate i {
+            font-size: 20px;
+        }
+
+        .btn-wa {
+            background: linear-gradient(145deg, #e0f2e9, #c8e6d9);
+            border-color: #a8d5ba;
+            color: #075e54;
+        }
+
+        .btn-wa:hover {
+            background: linear-gradient(145deg, #c8e6d9, #b0dbc8);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: #e2eaf5;
+            border-radius: 20px;
+            margin: 24px 0 8px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #1e3c5c, #3f80c5);
+            border-radius: 20px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px #3f80c5;
+        }
+
+        #statusText {
+            font-size: 12px;
+            color: #1e3c5c;
+            font-weight: 600;
+            margin-top: 12px;
+            min-height: 20px;
+        }
+
+        /* Main App (awalnya disembunyikan) */
+        .main-app {
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            min-height: 100vh;
+        }
+
+        .main-app.visible {
+            opacity: 1;
         }
 
         /* ===== VAULT NAVIGATION ===== */
@@ -198,17 +354,6 @@
             .nav-title i { font-size: 24px; }
             .nav-badge i { font-size: 18px; }
             .storage-indicator i { font-size: 16px; }
-        }
-
-        @media (max-width: 280px) {
-            .nav-home-btn .home-text,
-            .nav-title .title-text,
-            .nav-badge .badge-text,
-            .storage-indicator span { display: none; }
-        }
-
-        @media (hover: none) {
-            .nav-home-btn:hover { transform: none; }
         }
 
         /* header vault */
@@ -1142,7 +1287,7 @@
             padding: 10px 24px;
         }
 
-        /* Responsive untuk komponen lain */
+        /* Responsive */
         @media (max-width: 700px) {
             .stats-grid { flex-direction: column; }
             .action-bar { flex-direction: column; align-items: stretch; }
@@ -1161,150 +1306,191 @@
                 padding: 16px;
                 min-height: 300px;
             }
+            
+            .form-card {
+                padding: 30px 20px;
+            }
+            
+            .logo-circle {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+            }
+            
+            .brand-section h2 {
+                font-size: 22px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="app-wrapper">
-        <!-- ===== VAULT NAVIGATION ===== -->
-        <div class="vault-nav">
-            <div class="nav-main-row">
-                <button class="nav-home-btn" onclick="window.location.href='index.html'" aria-label="Kembali ke halaman utama">
-                    <i class="fas fa-arrow-left"></i>
-                    <span class="home-text">Kembali ke Home</span>
-                </button>
-                
-                <div class="nav-title">
-                    <i class="fas fa-shield-alt"></i>
-                    <span class="title-text">BrowserVault</span>
-                </div>
-                
-                <div class="nav-badge">
-                    <i class="fas fa-database"></i>
-                    <span class="badge-text">IndexedDB</span>
-                </div>
+    <!-- GATE / VERIFIKASI PAGE -->
+    <div id="gatePage" class="gate-page">
+        <div class="form-card">
+            <div class="brand-section">
+                <div class="logo-circle"><i class="fa-solid fa-lock"></i></div>
+                <h2>VERIFIKASI AKSES 💼</h2>
             </div>
+            <p class="gate-text">Selesaikan misi di bawah untuk membuka panel premium IQC iPhone secara gratis!</p>
             
-            <div class="nav-mobile-info">
-                <span class="storage-indicator">
-                    <i class="fas fa-microchip"></i>
-                    <span id="mobileStorageCount">0 items</span>
-                </span>
-            </div>
-        </div>
+            <button class="btn-gate" onclick="followSaluran()" id="followBtn">
+                <i class="fa-solid fa-bell"></i> FOLLOW SALURAN
+            </button>
+            
+            <button class="btn-gate btn-wa" onclick="shareWA()" id="shareBtn">
+                <i class="fa-brands fa-whatsapp"></i> SHARE KE TEMAN
+            </button>
 
-        <!-- header -->
-        <div class="top-brand">
-            <div class="logo-area">
-                <div class="vault-icon"><i class="fas fa-shield-alt"></i></div>
-                <div class="title">
-                    <h1>BrowserVault</h1>
-                    <p><i class="fas fa-database" style="color:#466e9c;"></i> IndexedDB local storage · JHON PRODUCTION</p>
+            <div class="progress-container" id="pContainer">
+                <div class="progress-bar" id="pBar"></div>
+            </div>
+            <p id="statusText" style="font-size: 12px; margin-top: 12px; color: #1e3c5c; font-weight: 600; min-height: 20px;"></p>
+        </div>
+    </div>
+
+    <!-- MAIN APP (awalnya disembunyikan) -->
+    <div id="mainApp" class="main-app">
+        <div class="app-wrapper">
+            <!-- ===== VAULT NAVIGATION ===== -->
+            <div class="vault-nav">
+                <div class="nav-main-row">
+                    <button class="nav-home-btn" onclick="window.location.href='index.html'" aria-label="Kembali ke halaman utama">
+                        <i class="fas fa-arrow-left"></i>
+                        <span class="home-text">Kembali ke Home</span>
+                    </button>
+                    
+                    <div class="nav-title">
+                        <i class="fas fa-shield-alt"></i>
+                        <span class="title-text">BrowserVault</span>
+                    </div>
+                    
+                    <div class="nav-badge">
+                        <i class="fas fa-database"></i>
+                        <span class="badge-text">IndexedDB</span>
+                    </div>
+                </div>
+                
+                <div class="nav-mobile-info">
+                    <span class="storage-indicator">
+                        <i class="fas fa-microchip"></i>
+                        <span id="mobileStorageCount">0 items</span>
+                    </span>
                 </div>
             </div>
-            <div class="storage-chip">
-                <i class="fas fa-microchip"></i> 
-                <span id="storageCount">0 items</span> · 
-                <span id="storageSize">0 KB</span> · 
-                <span id="storageQuota" style="color:#617fa0;">(0 MB / ? MB)</span>
-            </div>
-        </div>
 
-        <!-- Storage Warning (akan muncul jika mendekati batas) -->
-        <div id="storageWarning" class="storage-warning" style="display: none;">
-            <i class="fas fa-exclamation-triangle"></i>
-            <span id="warningMessage">Penyimpanan hampir penuh! Hapus beberapa file.</span>
-        </div>
-
-        <!-- stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
-                <div class="stat-content">
-                    <h3 id="statFiles">0</h3>
-                    <p>total files</p>
+            <!-- header -->
+            <div class="top-brand">
+                <div class="logo-area">
+                    <div class="vault-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="title">
+                        <h1>BrowserVault</h1>
+                        <p><i class="fas fa-database" style="color:#466e9c;"></i> IndexedDB local storage · JHON PRODUCTION</p>
+                    </div>
+                </div>
+                <div class="storage-chip">
+                    <i class="fas fa-microchip"></i> 
+                    <span id="storageCount">0 items</span> · 
+                    <span id="storageSize">0 KB</span> · 
+                    <span id="storageQuota" style="color:#617fa0;">(0 MB / ? MB)</span>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-images"></i></div>
-                <div class="stat-content">
-                    <h3 id="statImages">0</h3>
-                    <p>images</p>
+
+            <!-- Storage Warning -->
+            <div id="storageWarning" class="storage-warning" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="warningMessage">Penyimpanan hampir penuh! Hapus beberapa file.</span>
+            </div>
+
+            <!-- stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statFiles">0</h3>
+                        <p>total files</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-images"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statImages">0</h3>
+                        <p>images</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-video"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statVideos">0</h3>
+                        <p>videos</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-file-pdf"></i></div>
+                    <div class="stat-content">
+                        <h3 id="statPDFs">0</h3>
+                        <p>PDFs</p>
+                    </div>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-video"></i></div>
-                <div class="stat-content">
-                    <h3 id="statVideos">0</h3>
-                    <p>videos</p>
+
+            <!-- actions -->
+            <div class="action-bar">
+                <div class="upload-section">
+                    <button class="btn btn-primary" id="uploadBtn" aria-label="Upload file baru">
+                        <i class="fas fa-cloud-upload-alt"></i> Upload file
+                    </button>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                    <button class="btn" id="clearAllBtn" aria-label="Hapus semua file">
+                        <i class="fas fa-trash-alt"></i> Clear all
+                    </button>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Cari file..." aria-label="Pencarian file">
+                    <button id="searchBtn" aria-label="Cari"><i class="fas fa-arrow-right"></i></button>
                 </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-file-pdf"></i></div>
-                <div class="stat-content">
-                    <h3 id="statPDFs">0</h3>
-                    <p>PDFs</p>
+
+            <!-- tabs filter -->
+            <div class="filter-tabs" role="tablist">
+                <div class="tab active" data-filter="all" role="tab" tabindex="0" aria-selected="true">
+                    <i class="fas fa-layer-group"></i> Semua
+                </div>
+                <div class="tab" data-filter="image" role="tab" tabindex="0" aria-selected="false">
+                    <i class="fas fa-image"></i> Foto
+                </div>
+                <div class="tab" data-filter="video" role="tab" tabindex="0" aria-selected="false">
+                    <i class="fas fa-video"></i> Video
+                </div>
+                <div class="tab" data-filter="pdf" role="tab" tabindex="0" aria-selected="false">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </div>
+                <div class="tab" data-filter="apk" role="tab" tabindex="0" aria-selected="false">
+                    <i class="fab fa-android"></i> APK
+                </div>
+                <div class="tab" data-filter="other" role="tab" tabindex="0" aria-selected="false">
+                    <i class="fas fa-file"></i> Lainnya
                 </div>
             </div>
-        </div>
 
-        <!-- actions -->
-        <div class="action-bar">
-            <div class="upload-section">
-                <button class="btn btn-primary" id="uploadBtn" aria-label="Upload file baru">
-                    <i class="fas fa-cloud-upload-alt"></i> Upload file
-                </button>
-                <input type="file" id="fileInput" multiple style="display: none;">
-                <button class="btn" id="clearAllBtn" aria-label="Hapus semua file">
-                    <i class="fas fa-trash-alt"></i> Clear all
-                </button>
+            <!-- Loading Skeleton -->
+            <div id="loadingSkeleton" class="file-grid" style="display: none;">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
             </div>
-            <div class="search-box">
-                <i class="fas fa-search"></i>
-                <input type="text" id="searchInput" placeholder="Cari file..." aria-label="Pencarian file">
-                <button id="searchBtn" aria-label="Cari"><i class="fas fa-arrow-right"></i></button>
-            </div>
-        </div>
 
-        <!-- tabs filter -->
-        <div class="filter-tabs" role="tablist">
-            <div class="tab active" data-filter="all" role="tab" tabindex="0" aria-selected="true">
-                <i class="fas fa-layer-group"></i> Semua
-            </div>
-            <div class="tab" data-filter="image" role="tab" tabindex="0" aria-selected="false">
-                <i class="fas fa-image"></i> Foto
-            </div>
-            <div class="tab" data-filter="video" role="tab" tabindex="0" aria-selected="false">
-                <i class="fas fa-video"></i> Video
-            </div>
-            <div class="tab" data-filter="pdf" role="tab" tabindex="0" aria-selected="false">
-                <i class="fas fa-file-pdf"></i> PDF
-            </div>
-            <div class="tab" data-filter="apk" role="tab" tabindex="0" aria-selected="false">
-                <i class="fab fa-android"></i> APK
-            </div>
-            <div class="tab" data-filter="other" role="tab" tabindex="0" aria-selected="false">
-                <i class="fas fa-file"></i> Lainnya
-            </div>
-        </div>
+            <!-- file grid -->
+            <div id="fileGrid" class="file-grid"></div>
 
-        <!-- Loading Skeleton (akan ditampilkan saat loading) -->
-        <div id="loadingSkeleton" class="file-grid" style="display: none;">
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-        </div>
-
-        <!-- file grid -->
-        <div id="fileGrid" class="file-grid"></div>
-
-        <!-- footer -->
-        <div class="footer-note">
-            <span><i class="fas fa-database"></i> <strong>IndexedDB</strong> — 100% lokal, tidak ada server</span>
-            <span><i class="fas fa-rotate-right"></i> dilanjutkan dari arsip · tampilan rapi</span>
+            <!-- footer -->
+            <div class="footer-note">
+                <span><i class="fas fa-database"></i> <strong>IndexedDB</strong> — 100% lokal, tidak ada server</span>
+                <span><i class="fas fa-rotate-right"></i> dilanjutkan dari arsip · tampilan rapi</span>
+            </div>
         </div>
     </div>
 
@@ -1365,7 +1551,6 @@
                 </button>
             </div>
             <div class="preview-content" id="previewContent">
-                <!-- Konten preview akan diisi via JavaScript -->
                 <div class="preview-unsupported">
                     <i class="fas fa-file"></i>
                     <h3>Tidak dapat menampilkan preview</h3>
@@ -1384,7 +1569,84 @@
     <div id="toast" class="toast-msg"><i class="fas fa-check-circle"></i> File tersimpan</div>
 
     <script>
-        (function() {
+        // ============================================
+        // LOGIKA GATE / VERIFIKASI
+        // ============================================
+        let isFollowed = false;
+        let isShared = false;
+        let gateCompleted = false;
+
+        // Cek apakah sudah pernah verifikasi sebelumnya (pakai localStorage)
+        if (localStorage.getItem('browserVaultGate') === 'verified') {
+            // Langsung buka akses
+            gateCompleted = true;
+            document.getElementById('gatePage').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('visible');
+        }
+
+        function followSaluran() {
+            // Link saluran
+            window.open('https://whatsapp.com/channel/0029VaLiUSS5q08hPj5mcH0m', '_blank');
+            isFollowed = true;
+            
+            // Animasi button
+            const btn = document.getElementById('followBtn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 200);
+            
+            cekProgress();
+        }
+
+        function shareWA() {
+            // Format chat sesuai permintaan
+            const waText = `*WEBSITE IQC FAKE IP*\n> ${window.location.href}\n\n*SUMBER UTAMA*\n> https://whatsapp.com/channel/0029VaLiUSS5q08hPj5mcH0m`;
+            const encodedText = encodeURIComponent(waText);
+            window.open(`https://api.whatsapp.com/send?text=${encodedText}`, '_blank');
+            isShared = true;
+            
+            // Animasi button
+            const btn = document.getElementById('shareBtn');
+            btn.style.transform = 'scale(0.95)';
+            setTimeout(() => btn.style.transform = '', 200);
+            
+            cekProgress();
+        }
+
+        function cekProgress() {
+            const pBar = document.getElementById('pBar');
+            const statusText = document.getElementById('statusText');
+            
+            let progress = 0;
+            if (isFollowed) progress += 50;
+            if (isShared) progress += 50;
+            
+            pBar.style.width = progress + '%';
+            
+            if (progress === 50) {
+                statusText.innerHTML = '✅ Follow saluran selesai! Tinggal share ke teman...';
+            } else if (progress === 100) {
+                statusText.innerHTML = '🎉 VERIFIKASI BERHASIL! Mengalihkan...';
+                
+                // Simpan status di localStorage
+                localStorage.setItem('browserVaultGate', 'verified');
+                
+                // Sembunyikan gate dengan animasi
+                setTimeout(() => {
+                    document.getElementById('gatePage').classList.add('hidden');
+                    document.getElementById('mainApp').classList.add('visible');
+                    
+                    // Inisialisasi aplikasi utama
+                    initMainApp();
+                }, 1000);
+            } else {
+                statusText.innerHTML = '⏳ Lakukan kedua misi di atas untuk membuka akses...';
+            }
+        }
+
+        // ============================================
+        // LOGIKA UTAMA VAULT (dipindah ke fungsi)
+        // ============================================
+        async function initMainApp() {
             // IndexedDB wrapper
             const DB_NAME = 'BrowserVaultDB';
             const STORE_NAME = 'files';
@@ -1410,7 +1672,7 @@
                         console.warn('Gagal mendapatkan kuota:', e);
                     }
                 }
-                return { quota: 500 * 1024 * 1024, usage: 0 }; // Default 500MB
+                return { quota: 500 * 1024 * 1024, usage: 0 };
             }
 
             function getFileCategory(mime, fileName) {
@@ -1606,7 +1868,6 @@
                 return (str.length > n) ? str.substr(0, n-3) + '...' : str;
             }
 
-            // Tampilkan skeleton loading
             function showLoading(show) {
                 const skeleton = document.getElementById('loadingSkeleton');
                 const grid = document.getElementById('fileGrid');
@@ -1619,7 +1880,6 @@
                 }
             }
 
-            // Cek kuota penyimpanan
             async function checkStorageQuota() {
                 const { quota, usage } = await estimateQuota();
                 const totalBytes = (await getAllFiles()).reduce((acc, f) => acc + (f.size || 0), 0);
@@ -1642,11 +1902,9 @@
                 }
             }
 
-            // Fungsi untuk menampilkan preview file
             async function showPreview(file) {
                 currentPreviewFile = file;
                 
-                // Set header
                 document.getElementById('previewTitle').innerText = truncate(file.name, 50);
                 document.getElementById('previewSubtitle').innerHTML = `${formatBytes(file.size)} · ${file.type || 'Unknown type'}`;
                 document.getElementById('previewIcon').innerHTML = getFileIconFromType(file.type, file.name);
@@ -1655,22 +1913,17 @@
                 const fileType = file.type;
                 const fileName = file.name;
                 
-                // Kosongkan content
                 contentDiv.innerHTML = '';
                 
                 try {
-                    // Preview berdasarkan tipe file
                     if (fileType.startsWith('image/')) {
-                        // Preview gambar
                         const img = document.createElement('img');
                         img.src = file.dataUrl;
                         img.className = 'preview-image';
                         img.alt = file.name;
-                        img.onload = () => URL.revokeObjectURL?.(img.src);
                         contentDiv.appendChild(img);
                         
                     } else if (fileType.startsWith('video/')) {
-                        // Preview video
                         const video = document.createElement('video');
                         video.src = file.dataUrl;
                         video.className = 'preview-video';
@@ -1679,7 +1932,6 @@
                         contentDiv.appendChild(video);
                         
                     } else if (fileType === 'application/pdf') {
-                        // Preview PDF (pakai embed)
                         const embed = document.createElement('embed');
                         embed.src = file.dataUrl;
                         embed.className = 'preview-pdf';
@@ -1694,13 +1946,11 @@
                                fileName.endsWith('.xml') ||
                                fileName.endsWith('.txt')) {
                         
-                        // Untuk file teks, kita perlu decode dataUrl
                         const base64 = file.dataUrl.split(',')[1];
                         if (base64) {
                             const text = atob(base64);
                             const pre = document.createElement('pre');
                             
-                            // Deteksi apakah ini kode atau teks biasa
                             if (fileName.endsWith('.js') || fileName.endsWith('.html') || fileName.endsWith('.css') || fileName.endsWith('.json')) {
                                 pre.className = 'preview-code';
                             } else {
@@ -1714,7 +1964,6 @@
                         }
                         
                     } else {
-                        // Tipe file tidak didukung untuk preview langsung
                         contentDiv.innerHTML = `
                             <div class="preview-unsupported">
                                 <i class="fas fa-file"></i>
@@ -1735,17 +1984,14 @@
                     `;
                 }
                 
-                // Tampilkan modal
                 document.getElementById('previewModal').classList.add('active');
             }
 
-            // Render file grid
             async function refreshUI() {
                 showLoading(true);
                 try {
                     const files = await getFilesByFilter(currentFilter, searchTerm);
                     
-                    // Update stats
                     const allFiles = await getAllFiles();
                     const total = allFiles.length;
                     const images = allFiles.filter(f => f.category === 'image').length;
@@ -1781,7 +2027,6 @@
                         const size = formatBytes(f.size || 0);
                         const date = new Date(f.timestamp).toLocaleDateString('id', { day:'numeric', month:'short', year:'numeric' });
                         
-                        // Buat thumbnail untuk gambar
                         let thumbnailHtml = '';
                         if (f.category === 'image' && f.dataUrl) {
                             thumbnailHtml = `<img src="${f.dataUrl}" class="file-thumbnail" alt="${escapeHtml(f.name)}" loading="lazy">`;
@@ -1810,9 +2055,7 @@
                     }
                     grid.innerHTML = html;
 
-                    // Attach events
                     grid.querySelectorAll('.file-card').forEach(card => {
-                        // Double click untuk preview
                         card.addEventListener('dblclick', async () => {
                             const id = Number(card.dataset.id);
                             const file = await getFileById(id);
@@ -1895,7 +2138,7 @@
                 }
             }
 
-            // Upload dengan progress real-time
+            // Upload
             const overlay = document.getElementById('uploadOverlay');
             const progressListDiv = document.getElementById('progressList');
             const progressCounter = document.getElementById('progressCounter');
@@ -1968,7 +2211,6 @@
                 let completed = 0;
                 let failed = 0;
 
-                // Buat item progress
                 const items = [];
                 for (let i = 0; i < totalFiles; i++) {
                     const file = files[i];
@@ -2004,7 +2246,6 @@
                     statusSpan.innerHTML = `<span class="mini-loader"></span> 0%`;
 
                     try {
-                        // Simulasi progress
                         let progress = 0;
                         const interval = setInterval(() => {
                             if (uploadCanceled) {
@@ -2100,7 +2341,6 @@
                 }
             });
 
-            // Filter tabs
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => {
                     document.querySelectorAll('.tab').forEach(t => {
@@ -2195,7 +2435,6 @@
                 }
             });
 
-            // Keyboard: Escape untuk tutup modal
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     if (editModal.classList.contains('active')) {
@@ -2212,17 +2451,20 @@
             });
 
             // Initial load
-            window.addEventListener('load', async () => {
-                try {
-                    await openDB();
-                    await estimateQuota();
-                    await refreshUI();
-                } catch (error) {
-                    console.error('Gagal inisialisasi:', error);
-                    showToast('Gagal memuat aplikasi', true);
-                }
-            });
-        })();
+            try {
+                await openDB();
+                await estimateQuota();
+                await refreshUI();
+            } catch (error) {
+                console.error('Gagal inisialisasi:', error);
+                showToast('Gagal memuat aplikasi', true);
+            }
+        }
+
+        // Jika sudah verified sebelumnya, langsung init
+        if (localStorage.getItem('browserVaultGate') === 'verified') {
+            initMainApp();
+        }
     </script>
 </body>
 </html>
